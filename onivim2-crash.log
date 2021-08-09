@@ -1,0 +1,1 @@
+Yojson.Json_error("Line 19, bytes 2-35:\nExpected ',' or '}' but found '\"editor.zenMode.hideTabs\": true,\n'"):
