@@ -8,7 +8,6 @@ export default () => {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    console.log(user);
     if (user) {
       const postInfo = {
         email: user.email,
@@ -16,6 +15,7 @@ export default () => {
       };
       axios.post('http://localhost:8080/api/isLoggedIn', postInfo)
         .then((response) => {
+          console.log(response);
           setLoggedIn(response.data);
         });
     }
