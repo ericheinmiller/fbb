@@ -5,6 +5,7 @@ export default (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repassword, setRepassword] = useState('');
+  const [register, setRegister] = useState('hide');
 
   const handleMouseDown = () => {
     const postInfo = {
@@ -32,26 +33,26 @@ export default (props) => {
     }
   };
 
+  const handleRegister = (e) => {
+    setRegister(null);
+  };
+
   return (
     <div className="login">
       <h3>
-        Welcome. Just get it off of your chest.
+        Welcome. Just get it off of your chest
       </h3>
-      <p className="text">
-        Email
-      </p>
-      <input value={email} onChange={({ target }) => { setEmail(target.value); }} />
-      <p className="text">
-        Password
-      </p>
-      <input value={password} type="password" onChange={({ target }) => { setPassword(target.value); }} />
-      <p className="text">
-        Enter password again
-      </p>
-      <input value={repassword} type="password" onChange={({ target }) => { setRepassword(target.value); }} />
-      <button onMouseDown={() => { handleMouseDown(); }} type="button">
-        Login or Register
-      </button>
+      <input placeholder="Email Address" value={email} onChange={({ target }) => { setEmail(target.value); }} />
+      <input placeholder="Password" value={password} type="password" onChange={({ target }) => { setPassword(target.value); }} />
+      <input className={`register-input ${register}`} data-input="register" placeholder="Type Password Again" value={repassword} type="password" onChange={({ target }) => { setRepassword(target.value); }} />
+      <div className="login-container">
+        <button className="login-button" onMouseDown={() => { handleMouseDown(); }} type="button">
+          { register ? 'Login' : 'Register' }
+        </button>
+        <button className={`register-button ${register ? null : 'hide'}`} onMouseDown={(e) => { handleRegister(e); }} type="button">
+          Register
+        </button>
+      </div>
     </div>
   );
 };

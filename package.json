@@ -29,6 +29,7 @@
     "node-sass": "^6.0.1",
     "nodemon": "^2.0.12",
     "path": "^0.12.7",
+    "sass": "^1.37.5",
     "sass-loader": "^12.1.0",
     "style-loader": "^3.2.1",
     "webpack": "^5.48.0",
