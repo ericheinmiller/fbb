@@ -17,6 +17,7 @@ html, body {
 
 .login {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -48,11 +49,49 @@ html, body {
   }
 }
 
+.input-error {
+  border-bottom: 2px solid red !important;
+}
+
+.input-complete {
+  border-bottom: 2px solid white !important;
+}
+
+.input-container {
+  width: 100%;
+  position: relative;
+}
+
+.error-message {
+  position: absolute !important;
+  background-color: white;
+  position: absolute;
+  border-radius: 2px;
+  left: 110%;
+  top: 23px;
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 2px 4px 2px 4px;
+  font-family: Arial, Helvetica, sans-serif
+}
+
+.error-message:before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 4px;
+  border-left: 5px solid transparent;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid white;
+}
+
 .login-container {
   margin-top: 20px;
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .login-button {
@@ -63,6 +102,9 @@ html, body {
   border-radius: 3px;
   letter-spacing: 4px;
   cursor: pointer;
+  &:hover {
+    background-color: #797979;
+  }
 }
 
 .register-input {
@@ -80,12 +122,9 @@ html, body {
 .register-button {
   background-color: black;
   padding: 10px;
-  width: 100%;
   cursor: pointer;
   border: none;
   color: darkgray;
   text-decoration: underline;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
 }
+

@@ -1,55 +1,85 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import validator from 'email-validator';
+import Error from './error.jsx';
 
 export default (props) => {
   const [email, setEmail] = useState('');
+  const [emailStatus, setEmailStatus] = useState(null);
+  const [emailError, setEmailError] = useState(null);
   const [password, setPassword] = useState('');
-  const [repassword, setRepassword] = useState('');
-  const [register, setRegister] = useState('hide');
+  const [passwordStatus, setPasswordStatus] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
+  const [rePassword, setRepassword] = useState('');
+  const [rePasswordStatus, setRepasswordStatus] = useState(null);
+  const [register, setRegister] = useState(false);
 
   const handleMouseDown = () => {
     const postInfo = {
       email,
       password,
     };
-    if (repassword && repassword === password) {
-      axios.post('http://localhost:8080/api/register', postInfo)
-      // register
-        .then((response) => {
-          if (response.data === true) {
-            localStorage.setItem('user', JSON.stringify(postInfo));
-            props.setLoggedIn(response.data);
-          }
-        });
+
+    axios.post(`http://localhost:8080/api/${register ? 'register' : 'login'}`, postInfo)
+      .then((response) => {
+        if (response.data === true) {
+          localStorage.setItem('user', JSON.stringify(postInfo));
+          props.setLoggedIn(response.data);
+        } else {
+          setEmailStatus('input-error');
+          setPasswordStatus('input-error');
+          setPasswordError('Email or password incorrect');
+        }
+      });
+  };
+
+  const handleEmailChange = (target) => {
+    setEmail(target.value);
+    if (target.value === '' || validator.validate(target.value)) {
+      setEmailStatus(null);
+      setEmailError(null);
     } else {
-      // login
-      axios.post('http://localhost:8080/api/login', postInfo)
-        .then((response) => {
-          if (response.data === true) {
-            localStorage.setItem('user', JSON.stringify(postInfo));
-            props.setLoggedIn(response.data);
-          }
-        });
+      setEmailStatus('input-error');
+      setEmailError('Not a valid email address');
     }
   };
 
-  const handleRegister = (e) => {
-    setRegister(null);
+  const handlePasswordChange = (target) => {
+    setPassword(target.value);
+    setPasswordError(null);
+    setPasswordStatus(null);
+  };
+
+  const handleRegister = (target) => {
+    setRepassword(target.value);
+    if (password !== target.value) {
+      setRepasswordStatus('input-error');
+    } else {
+      setRepasswordStatus(null);
+    }
   };
 
   return (
     <div className="login">
       <h3>
-        Welcome. Just get it off of your chest
+        Welcome. Just say it.
       </h3>
-      <input placeholder="Email Address" value={email} onChange={({ target }) => { setEmail(target.value); }} />
-      <input placeholder="Password" value={password} type="password" onChange={({ target }) => { setPassword(target.value); }} />
-      <input className={`register-input ${register}`} data-input="register" placeholder="Type Password Again" value={repassword} type="password" onChange={({ target }) => { setRepassword(target.value); }} />
+      <div className="input-container">
+        <input placeholder="Email Address" value={email} className={`${emailStatus}`} onChange={({ target }) => { handleEmailChange(target); }} />
+        { emailError ? <Error message={emailError} /> : null }
+      </div>
+      <div className="input-container">
+        <input placeholder="Password" value={password} className={`${passwordStatus}`} type="password" onChange={({ target }) => { handlePasswordChange(target); }} />
+        { passwordError ? <Error message={passwordError} /> : null }
+      </div>
+      <div className="input-container">
+        <input className={`register-input ${register ? null : 'hide'} ${rePasswordStatus}`} placeholder="Type Password Again" value={rePassword} type="password" onChange={({ target }) => { handleRegister(target); }} />
+      </div>
       <div className="login-container">
         <button className="login-button" onMouseDown={() => { handleMouseDown(); }} type="button">
-          { register ? 'Login' : 'Register' }
+          { register ? 'Register' : 'Login' }
         </button>
-        <button className={`register-button ${register ? null : 'hide'}`} onMouseDown={(e) => { handleRegister(e); }} type="button">
+        <button className={`register-button ${register ? 'hide' : null}`} onMouseDown={() => { setRegister(true); }} type="button">
           Register
         </button>
       </div>
