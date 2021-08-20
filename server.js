@@ -36,8 +36,30 @@ app.post('/api/isLoggedIn', (req, res) => {
   });
 });
 
+
+app.post('/api/post', (req, res) => {
+  const { content, userId } = req.body;
+  const query = ``;
+  const login = new Promise((resolve, reject) => {
+    client.query(query, (error, results) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(results);
+    });
+  });
+  login.then((message) => {
+    if (message.rows.length) {
+      res.send(true);
+    } else {
+      res.send(false);
+    }
+  });
+});
+
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
+  console.log('Logging in...');
   const query = `select email, password from users where email = '${email}' and password = '${password}'`;
   const login = new Promise((resolve, reject) => {
     client.query(query, (error, results) => {
@@ -58,11 +80,12 @@ app.post('/api/login', (req, res) => {
 });
 
 app.post('/api/register', (req, res) => {
+  console.log('Attempting to Register...');
   const { email, password } = req.body;
   const query = `insert into users (email, password) values ('${email}', '${password}')`;
   client.query(query)
     .then((response) => {
-      console.log(response);
+      console.log('Successfully Registered! ', response);
       res.send(true);
     }).catch((err) => {
       console.log('failure, error: ', err);

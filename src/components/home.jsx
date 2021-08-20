@@ -1,4 +1,5 @@
 import React from 'react';
+import Post from './post.jsx';
 
 export default (props) => {
   const handleMouseDown = () => {
@@ -8,8 +9,11 @@ export default (props) => {
   };
 
   return (
-    <div onMouseDown={() => handleMouseDown()} className="home">
-      <button className='logout'>
+    <div className="home">
+      <Post />
+      <Post />
+      <Post />
+      <button onMouseDown={() => handleMouseDown()}className='logout'>
         Logout
       </button>
     </div>

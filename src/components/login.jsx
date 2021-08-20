@@ -12,13 +12,29 @@ export default (props) => {
   const [passwordError, setPasswordError] = useState(null);
   const [rePassword, setRepassword] = useState('');
   const [rePasswordStatus, setRepasswordStatus] = useState(null);
+  const [rePasswordError, setRepasswordError] = useState(null);
   const [register, setRegister] = useState(false);
 
   const handleMouseDown = () => {
+    if (emailError || passwordError || rePasswordError) {
+      return;
+    }
     const postInfo = {
       email,
       password,
     };
+
+    if (email === '') {
+      setEmailStatus('login-input--error');
+      setEmailError('Email cannot be blank.');
+      return;
+    }
+
+    if (password === '') {
+      setPasswordStatus('login-input--error');
+      setPasswordError('Password cannot be blank.');
+      return;
+    }
 
     axios.post(`http://localhost:8080/api/${register ? 'register' : 'login'}`, postInfo)
       .then((response) => {
@@ -26,8 +42,8 @@ export default (props) => {
           localStorage.setItem('user', JSON.stringify(postInfo));
           props.setLoggedIn(response.data);
         } else {
-          setEmailStatus('input-error');
-          setPasswordStatus('input-error');
+          setEmailStatus('login-input--error');
+          setPasswordStatus('login-input--error');
           setPasswordError('Email or password incorrect');
         }
       });
@@ -39,7 +55,7 @@ export default (props) => {
       setEmailStatus(null);
       setEmailError(null);
     } else {
-      setEmailStatus('input-error');
+      setEmailStatus('login-input--error');
       setEmailError('Not a valid email address');
     }
   };
@@ -53,27 +69,30 @@ export default (props) => {
   const handleRegister = (target) => {
     setRepassword(target.value);
     if (password !== target.value) {
-      setRepasswordStatus('input-error');
+      setRepasswordError('Passwords do not match.');
+      setRepasswordStatus('login-input--error');
     } else {
       setRepasswordStatus(null);
+      setRepasswordError(null);
     }
   };
 
   return (
     <div className="login">
-      <h3>
+      <h3 className="login__title">
         Welcome. Just say it.
       </h3>
-      <div className="input-container">
-        <input placeholder="Email Address" value={email} className={`${emailStatus}`} onChange={({ target }) => { handleEmailChange(target); }} />
+      <div className="login-input-container">
+        <input placeholder="Email Address" value={email} className={`login-input ${emailStatus}`} onChange={({ target }) => { handleEmailChange(target); }} />
         { emailError ? <Error message={emailError} /> : null }
       </div>
-      <div className="input-container">
-        <input placeholder="Password" value={password} className={`${passwordStatus}`} type="password" onChange={({ target }) => { handlePasswordChange(target); }} />
+      <div className="login-input-container">
+        <input placeholder="Password" value={password} className={`login-input ${passwordStatus}`} type="password" onChange={({ target }) => { handlePasswordChange(target); }} />
         { passwordError ? <Error message={passwordError} /> : null }
       </div>
-      <div className="input-container">
-        <input className={`register-input ${register ? null : 'hide'} ${rePasswordStatus}`} placeholder="Type Password Again" value={rePassword} type="password" onChange={({ target }) => { handleRegister(target); }} />
+      <div className="login-input-container">
+        <input className={`login-input ${register ? null : 'hide'} ${rePasswordStatus}`} placeholder="Type Password Again" value={rePassword} type="password" onChange={({ target }) => { handleRegister(target); }} />
+        { rePasswordError ? <Error message={rePasswordError} /> : null }
       </div>
       <div className="login-container">
         <button className="login-button" onMouseDown={() => { handleMouseDown(); }} type="button">
