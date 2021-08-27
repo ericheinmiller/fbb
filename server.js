@@ -93,4 +93,31 @@ app.post('/api/register', (req, res) => {
     });
 });
 
+app.post('/api/newPost', (req, res) => {
+  console.log('Attempting to make a new post...', req.body);
+  const { email, content, id } = req.body;
+  const query = `insert into posts (content, userId) values ('${content}', ${id}) `;
+  client.query(query)
+    .then((response) => {
+      console.log('Successfully posted! ', response);
+      res.send(true);
+    }).catch((err) => {
+      console.log('failure, error: ', err);
+      res.send(false);
+    });
+});
+
+app.get('/api/getPosts', (req, res) => {
+  console.log('Attempting to retrieve posts');
+  const query = 'select posts.content, users.email from posts inner join users on posts.userid = users.id';
+  client.query(query)
+    .then((response) => {
+      console.log('Successful query', response);
+      res.send(response);
+    }).catch((err) => {
+      console.log('failure, error: ', err);
+      res.send(false);
+    });
+});
+
 app.listen(3000, () => console.log('The server is up and running'));

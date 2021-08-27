@@ -122,13 +122,19 @@ html, body, #root {
 
 .home {
   background-color: #171717;
-  width: 85%;
+  width: 720px;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   padding-top: 25px;
+}
+
+.logout {
+  position: fixed;
+  top: 35px;
+  right: 16px;
 }
 
 .post {
