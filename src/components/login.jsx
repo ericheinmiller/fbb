@@ -16,10 +16,6 @@ export default (props) => {
     if (emailError || passwordError || registerPasswordError) {
       return;
     }
-    const postInfo = {
-      email,
-      password,
-    };
 
     if (email === '') {
       setEmailError('Email cannot be blank.');
@@ -32,14 +28,25 @@ export default (props) => {
     }
 
     if (password !== registerPassword && register) {
-      setRegisterPasswordError('Passwords do not match');
+      setRegisterPasswordError('Passwords do not match.');
       return;
     }
 
+    const postInfo = {
+      email,
+      password,
+    };
+
     axios.post(`http://localhost:8080/api/${register ? 'register' : 'login'}`, postInfo)
       .then((response) => {
-        if (response.data === true) {
-          props.setLoggedIn(response.data);
+        const userData = {
+          id: response.data.rows[0].id,
+          email,
+          date: Date.now(),
+        };
+        if (response.status === 200) {
+          localStorage.setItem('user', JSON.stringify(userData));
+          props.setLoggedIn(true);
         } else {
           setPasswordError('Email or password incorrect');
         }

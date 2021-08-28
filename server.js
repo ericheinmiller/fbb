@@ -17,8 +17,12 @@ client.connect((err) => {
 app.use(express.static('dist'));
 
 app.post('/api/isLoggedIn', (req, res) => {
-  const { email, password } = req.body;
-  const query = `select email, password from users where email = '${email}' and password = '${password}'`;
+  const { id, date } = req.body;
+  const timePeriod = Date.now() - date;
+  if (timePeriod > 3600000) {
+    res.send(false);
+  }
+  const query = `select email, password from users where id = '${id}'`;
   const login = new Promise((resolve, reject) => {
     client.query(query, (error, results) => {
       if (error) {
@@ -60,7 +64,7 @@ app.post('/api/post', (req, res) => {
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
   console.log('Logging in...');
-  const query = `select email, password from users where email = '${email}' and password = '${password}'`;
+  const query = `select id, email, password from users where email = '${email}' and password = '${password}'`;
   const login = new Promise((resolve, reject) => {
     client.query(query, (error, results) => {
       if (error) {
@@ -70,9 +74,9 @@ app.post('/api/login', (req, res) => {
     });
   });
   login.then((message) => {
-    console.log(message);
+    console.log('Successfully logged in!');
     if (message.rows.length) {
-      res.send(true);
+      res.send(message);
     } else {
       res.send(false);
     }
@@ -82,11 +86,11 @@ app.post('/api/login', (req, res) => {
 app.post('/api/register', (req, res) => {
   console.log('Attempting to Register...');
   const { email, password } = req.body;
-  const query = `insert into users (email, password) values ('${email}', '${password}')`;
+  const query = `insert into users (email, password) values ('${email}', '${password}') returning id`;
   client.query(query)
     .then((response) => {
       console.log('Successfully Registered! ', response);
-      res.send(true);
+      res.send(response);
     }).catch((err) => {
       console.log('failure, error: ', err);
       res.send(false);
@@ -95,11 +99,11 @@ app.post('/api/register', (req, res) => {
 
 app.post('/api/newPost', (req, res) => {
   console.log('Attempting to make a new post...', req.body);
-  const { email, content, id } = req.body;
+  const { content, id } = req.body;
   const query = `insert into posts (content, userId) values ('${content}', ${id}) `;
   client.query(query)
     .then((response) => {
-      console.log('Successfully posted! ', response);
+      console.log('Successfully posted!');
       res.send(true);
     }).catch((err) => {
       console.log('failure, error: ', err);
@@ -112,7 +116,7 @@ app.get('/api/getPosts', (req, res) => {
   const query = 'select posts.content, users.email from posts inner join users on posts.userid = users.id';
   client.query(query)
     .then((response) => {
-      console.log('Successful query', response);
+      console.log('Successful query');
       res.send(response);
     }).catch((err) => {
       console.log('failure, error: ', err);

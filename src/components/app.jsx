@@ -7,14 +7,10 @@ export default () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      const postInfo = {
-        id: user.id,
-        email: user.email,
-        password: user.password,
-      };
-      axios.post('http://localhost:8080/api/isLoggedIn', postInfo)
+    const userInfo = JSON.parse(localStorage.getItem('user'));
+
+    if (userInfo) {
+      axios.post('http://localhost:8080/api/isLoggedIn', userInfo)
         .then((response) => {
           setLoggedIn(response.data);
         });
