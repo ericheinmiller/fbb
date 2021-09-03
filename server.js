@@ -17,10 +17,13 @@ client.connect((err) => {
 app.use(express.static('dist'));
 
 app.post('/api/isLoggedIn', (req, res) => {
+  console.log('Checking if logged in');
   const { id, date } = req.body;
   const timePeriod = Date.now() - date;
   if (timePeriod > 3600000) {
+    console.log('not logged in');
     res.send(false);
+    return;
   }
   const query = `select email, password from users where id = '${id}'`;
   const login = new Promise((resolve, reject) => {
@@ -40,10 +43,9 @@ app.post('/api/isLoggedIn', (req, res) => {
   });
 });
 
-
 app.post('/api/post', (req, res) => {
-  const { content, userId } = req.body;
-  const query = ``;
+  const { content, userId, date } = req.body;
+  const query = '';
   const login = new Promise((resolve, reject) => {
     client.query(query, (error, results) => {
       if (error) {
@@ -62,8 +64,8 @@ app.post('/api/post', (req, res) => {
 });
 
 app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
   console.log('Logging in...');
+  const { email, password } = req.body;
   const query = `select id, email, password from users where email = '${email}' and password = '${password}'`;
   const login = new Promise((resolve, reject) => {
     client.query(query, (error, results) => {
@@ -100,8 +102,8 @@ app.post('/api/register', (req, res) => {
 app.post('/api/newPost', (req, res) => {
   console.log('Attempting to make a new post...', req.body);
   const { content, id } = req.body;
-  const query = `insert into posts (content, userId) values ('${content}', ${id}) `;
-  client.query(query)
+  const savedContent = content;
+  client.query('insert into posts (content, userId, date) values ($1, $2, $3)', [content, id, new Date()])
     .then((response) => {
       console.log('Successfully posted!');
       res.send(true);
@@ -113,7 +115,7 @@ app.post('/api/newPost', (req, res) => {
 
 app.get('/api/getPosts', (req, res) => {
   console.log('Attempting to retrieve posts');
-  const query = 'select posts.content, users.email from posts inner join users on posts.userid = users.id';
+  const query = 'select posts.content, posts.date, users.email from posts inner join users on posts.userid = users.id order by posts.date desc';
   client.query(query)
     .then((response) => {
       console.log('Successful query');

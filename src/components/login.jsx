@@ -76,9 +76,9 @@ export default (props) => {
     }
   };
 
-  const input = (placeholder, value, error, callback, visible) => (
+  const input = (placeholder, value, error, callback, visible, password) => (
     <div className="login-input-container">
-      <input placeholder={placeholder} value={value} className={`login-input ${error ? 'login-input--error' : null} ${visible ? null : 'hide'}`} onChange={({ target }) => { callback(target); }} />
+      <input placeholder={placeholder} value={value} className={`login-input ${error ? 'login-input--error' : null} ${visible ? null : 'hide'}`} onChange={({ target }) => { callback(target); }} type={password ? 'password' : null} />
       { error ? <Error message={error} /> : null }
     </div>
   );
@@ -88,9 +88,9 @@ export default (props) => {
       <h3 className="login__title">
         Welcome. Just say it.
       </h3>
-      { input('Email Address', email, emailError, handleEmailChange, true) }
-      { input('Password', password, passwordError, handlePasswordChange, true) }
-      { input('Type Password Again', registerPassword, registerPasswordError, handleRegister, register) }
+      { input('Email Address', email, emailError, handleEmailChange, true, false) }
+      { input('Password', password, passwordError, handlePasswordChange, true, true) }
+      { input('Type Password Again', registerPassword, registerPasswordError, handleRegister, register, true) }
       <div className="login-container">
         <button className="login-button" onMouseDown={() => { handleMouseDown(); }} type="button">
           { register ? 'Register' : 'Login' }
